@@ -47,4 +47,8 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
     console.log("Client Connected: ", socket.id);
+    socket.on("new-connection", (peerID) => {
+        console.log("New Connection Request");
+        socket.broadcast.emit("user-add", peerID);
+    })
 })
