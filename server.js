@@ -29,11 +29,11 @@ app.use('/peerjs', peerServer);
 
 // listeners
 peerServer.on('connection', (client) => {
-    console.log("Peer connected ", client.id);
+    console.log("Peer connected with ID: ", client.id);
 });
 
 peerServer.on('disconnect', (client) => {
-    console.log("Peer disconnected ", client);
+    console.log("Peer disconnected with ID: ", client.id);
 });
 
 

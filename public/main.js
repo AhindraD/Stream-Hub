@@ -5,4 +5,6 @@ const peer = new Peer(undefined, {
     host: "localhost",
     port: 8000,
     path: "/peerjs"
-})
+});
+
+console.log(peer);
