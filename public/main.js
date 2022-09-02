@@ -1,20 +1,3 @@
-//HTML Component
-const videoElm = document.querySelector(".stream");
-
-navigator.mediaDevices.getUserMedia({
-    video: true,
-    audio: true,
-})
-    .then(stream => {
-        videoElm.srcObject = stream;
-        videoElm.addEventListener("loadedmetadata", () => {
-            videoElm.play();
-        })
-    })
-    .catch(err => console.log("Error retrieving webcam"))
-
-
-
 const socket = io.connect(location.origin);//("http://localhost:8000/")
 console.log("MainJS loaded");
 
@@ -23,6 +6,48 @@ const peer = new Peer(undefined, {
     port: 8000,
     path: "/peerjs"
 });
+
+//HTML Component
+const videoElm = document.querySelector(".stream");
+const videoDiv = document.querySelector(".vid-cont")
+
+navigator.mediaDevices.getUserMedia({
+    video: true,
+    audio: false,
+})
+    .then(stream => {
+        videoElm.srcObject = stream;
+        videoElm.addEventListener("loadedmetadata", () => {
+            videoElm.play();
+        })
+
+        peer.on("call", (call) => {
+            //console.log("B4 call");
+            call.answer(stream);
+        })
+
+        //console.log(stream);
+
+        socket.on("user-add", (newPeerID) => {
+            setTimeout(() => {
+                let call = peer.call(newPeerID, stream);
+                call.on("stream", (remoteStream) => {
+                    console.log("Stream received!");
+                    console.log(remoteStream);
+
+                    const newVideo = document.createElement("video");
+                    newVideo.srcObject = remoteStream;
+                    newVideo.addEventListener("loadedmetadata", () => {
+                        newVideo.play();
+                    });
+                    videoDiv.appendChild(newVideo);
+                })
+            }, 1000);
+        })
+    })
+    .catch(err => console.log("Error retrieving webcam", err))
+
+
 
 //console.log(peer);
 
