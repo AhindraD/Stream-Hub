@@ -46,9 +46,18 @@ const io = new Server(httpServer, {
 });
 
 io.on("connection", (socket) => {
-    console.log("Client Connected: ", socket.id);
-    socket.on("new-connection", (peerID) => {
-        console.log("New Connection Request");
-        socket.broadcast.emit("user-add", peerID);
-    })
+    let room, user;
+    socket.on("join-room", (data) => {
+        console.log(data)
+        socket.join(data.roomId);
+        connections[data.roomId] = connections[data.roomId] === undefined ? [data.userId] : connections[data.roomId].concat([data.userId]);
+        room = data.roomId;
+        user = data.userId;
+        console.log(connections)
+        io.to(data.roomId).emit("user-connected", data.userId);
+    });
+
+    socket.on("disconnect", () => {
+        io.to(room).emit("user-disconnected", user);
+    });
 })
