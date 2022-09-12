@@ -5,20 +5,28 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Stream Hub!</title>
 </head>
 
 <body>
-    <h1>Stream Hub!!!</h1>
-    <div class="vid-cont">
-        <video class="stream"></video>
-    </div>
-
-    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
-        integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k"
-        crossorigin="anonymous"></script>
-    <script src="peerjs.min.js"></script>
-    <script src="main.js"></script>
+        <div class="container">
+            <h1 class="title">Welcome to Stream Hub!</h1>
+            <h3>My Stream:</h3>
+            <video class="stream"></video>
+        
+            <h3 class="v">Viewers:</h3>
+            <div class="received"></div>
+        </div>
+        
+        <script src="peerjs.min.js"></script>
+        <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
+            integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k"
+            crossorigin="anonymous"></script>
+        <script src="main.js"></script>
+        <script>
+            const ROOM_ID = "<%= roomId %>";
+        </script>
 </body>
 
 </html>

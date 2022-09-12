@@ -19,7 +19,7 @@ let selfId;
 navigator.getUserMedia(
     {
         video: true,
-        audio: true,
+        audio: false,
     },
     function (stream) {
         videoEl.srcObject = stream;

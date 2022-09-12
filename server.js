@@ -1,48 +1,50 @@
 const express = require("express");
-const { Server } = require("socket.io");
-const morgan = require('morgan');
+const morgan = require("morgan");
 const cors = require("cors");
-const { ExpressPeerServer } = require('peer');
+const { ExpressPeerServer } = require("peer");
+
 const app = express();
 
-app.use(express.static("public"));
 app.use(cors());
-
 app.use(morgan("dev"));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.static("public"));
 app.set("view engine", "ejs");
 
-app.get("/", (request, response) => {
-    response.render("index");
-})
-
-const httpServer = app.listen(process.env.PORT || 8000, () => {
-    const port = httpServer.address().port;
-    console.log(`Server running on ${port}`);
+app.get("/", (req, res) => {
+    let randomKey=Math.random().toString(36).slice(2,13);
+    res.redirect(`/${randomKey}`);
 });
 
-// peerjs
+app.get("/:room", (req, res) => {
+    res.render("index", { roomId: req.params.room });
+});
+
+const httpServer = app.listen(process.env.PORT || 8000, () => {
+    console.log("Server connected");
+});
+
 const peerServer = ExpressPeerServer(httpServer, {
     debug: true,
 });
-app.use('/peerjs', peerServer);
 
-// listeners
-peerServer.on('connection', (client) => {
-    console.log("Peer connected with ID: ", client.id);
+app.use("/peerjs", peerServer);
+
+const connections = {};
+
+peerServer.on("connection", (peer) => {
+    console.log("Peer connected", peer.id);
 });
 
-peerServer.on('disconnect', (client) => {
-    console.log("Peer disconnected with ID: ", client.id);
+peerServer.on("disconnect", (peer) => {
+    console.log("Peer disconnected", peer.id);
+
 });
 
-
-
-
-const io = new Server(httpServer, {
+const io = require("socket.io")(httpServer, {
     cors: {
         origin: "*",
-    }
+        methods: ["GET", "POST"],
+    },
 });
 
 io.on("connection", (socket) => {
@@ -60,4 +62,4 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         io.to(room).emit("user-disconnected", user);
     });
-})
+});
